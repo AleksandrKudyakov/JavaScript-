@@ -42,51 +42,60 @@ let goods = [
 
 ];
 
-let basket = [];
+let shoppingСart = [];
 
-function addGood(id, count){
-    basket.push({"good": id, "amount": count});
+
+shoppingСart.addGood = function(goodIndex, amount) {
+    this.push({
+        good: goodIndex,
+        amount,
+    })
 }
 
-function removeGood(id){
-    let index = basket.findIndex(x => x.good == id);
-    basket.splice(index, 1);
+shoppingСart.removeGood = function(goodIndex, amount) {
+    for(let i = 0; i < this.length; ++i) {
+        if (this[i].good == goodIndex) {
+            if (amount >= this[i].amount) {
+                this.splice(i, 1);
+                return;
+            } 
+
+            this[i].amount -= amount;
+        }    
+    }
 }
 
-function cleanBasket(){
-    basket.splice(0, basket.length);
+shoppingСart.clear = function() {
+    this.splice(0, this.length);
+}
+
+shoppingСart.getTotalGoods = function(goods) {
+    result = {
+        totalAmount: 0,
+        totalSumm: 0,
+    }
+
+    for(let el of this) {
+        result.totalAmount += el.amount;
+        result.totalSumm += goods[el.good].price * el.amount;
+    }
+
+    return result;
+}
+
+function main(shoppingСart, goods) {
+    shoppingСart.addGood(0, 10);
+    shoppingСart.removeGood(0, 5);
+    shoppingСart.addGood(1, 1);
+    shoppingСart.addGood(2, 7);
+    shoppingСart.addGood(3, 1);
+    shoppingСart.removeGood(3, 1);
+
+    console.log(shoppingСart)
+    console.log(shoppingСart.getTotalGoods(goods));
+    shoppingСart.clear();
+    console.log(shoppingСart.getTotalGoods(goods));
 }
 
 
-function printGoodsInfo()
-{
-    let sum = 0;
-    let amount = 0;
-
-    basket.forEach(item => {
-        var good = goods.find(x => x.id == item.good);
-        amount += item.amount;
-        sum+= item.amount * good.price;
-        console.log("good: " + good.name + "; " + "price: " + good.price + "; " + "amount: " + item.amount);    
-    });
-
-    console.log("\nTotal amount: " + amount); 
-    console.log("\nTotal sum: " + sum); 
-}
-
-function main() {
-    addGood(1, 1);
-    addGood(33, 2);
-
-    removeGood(1);
-
-    addGood(127, 1);
-    addGood(876, 1);
-
-    //cleanBasket();
-
-    printGoodsInfo();
-}
-
-
-main();
+main(shoppingСart, goods);
